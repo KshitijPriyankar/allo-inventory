@@ -17,7 +17,6 @@ export async function POST(req: NextRequest) {
     const { productId, warehouseId, quantity } = parsed.data;
 
     const reservation = await prisma.$transaction(async (tx) => {
-      // Lazy cleanup — release expired reservations first
       const now = new Date();
       const expired = await tx.reservation.findMany({
         where: {
@@ -42,11 +41,6 @@ export async function POST(req: NextRequest) {
             AND "warehouseId" = ${warehouseId}
         `;
       }
-
-      // THE CORE CONCURRENCY GUARD
-      // Single atomic UPDATE — only succeeds if enough stock exists right now.
-      // Two simultaneous requests for the last unit: PostgreSQL serialises them,
-      // exactly one gets rowsAffected=1, the other gets 0 → 409.
       const rowsAffected = await tx.$executeRaw`
         UPDATE "Stock"
         SET reserved = reserved + ${quantity}

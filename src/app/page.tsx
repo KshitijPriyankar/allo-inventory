@@ -45,7 +45,7 @@ export default function HomePage() {
       });
       if (res.status === 409) {
         const data = await res.json();
-        setError(`⚠️ ${data.error}`);
+        setError(' ${data.error}');
         return;
       }
       if (!res.ok) {

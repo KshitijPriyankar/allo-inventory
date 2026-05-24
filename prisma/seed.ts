@@ -50,7 +50,7 @@ async function main() {
     ],
   });
 
-  console.log("✅ Done! Warehouses: 2, Products: 3, Stock rows: 6");
+  console.log("Done! Warehouses: 2, Products: 3, Stock rows: 6");
 }
 
 main()

@@ -44,7 +44,7 @@ export default function ReservationPage({ params }: { params: Promise<{ id: stri
       const res  = await fetch(`/api/reservations/${id}/confirm`, { method: "POST" });
       const data = await res.json();
       if (res.status === 410) {
-        setActionError(`⚠️ ${data.error}`);
+        setActionError('${data.error}');
         setReservation((prev) => prev ? { ...prev, status: "RELEASED" } : null);
         return;
       }
@@ -67,7 +67,7 @@ export default function ReservationPage({ params }: { params: Promise<{ id: stri
 
   const handleExpired = useCallback(() => {
     setReservation((prev) => prev ? { ...prev, status: "RELEASED" } : null);
-    setActionError("⏰ Your reservation has expired. The item is back in stock.");
+    setActionError("Your reservation has expired. The item is back in stock.");
   }, []);
 
   if (loading) return (
@@ -80,7 +80,7 @@ export default function ReservationPage({ params }: { params: Promise<{ id: stri
     <main className="flex flex-col items-center justify-center py-32 gap-4">
       <p className="text-red-500">{pageError ?? "Something went wrong."}</p>
       <button onClick={() => router.push("/")} className="text-indigo-600 hover:underline text-sm">
-        ← Back to products
+        Back to products
       </button>
     </main>
   );
@@ -91,7 +91,7 @@ export default function ReservationPage({ params }: { params: Promise<{ id: stri
   return (
     <main className="max-w-lg mx-auto px-4 py-10">
       <button onClick={() => router.push("/")} className="text-sm text-indigo-600 hover:underline mb-6 inline-block">
-        ← Back to products
+        Back to products
       </button>
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
@@ -100,17 +100,17 @@ export default function ReservationPage({ params }: { params: Promise<{ id: stri
         <div className="mb-5">
           {status === "CONFIRMED" && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
-              ✓ Payment Confirmed
+              Payment Confirmed
             </span>
           )}
           {status === "RELEASED" && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm font-semibold">
-              ✗ Reservation Released
+              Reservation Released
             </span>
           )}
           {status === "PENDING" && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-semibold">
-              ⏳ Awaiting Payment
+              Awaiting Payment
             </span>
           )}
         </div>
