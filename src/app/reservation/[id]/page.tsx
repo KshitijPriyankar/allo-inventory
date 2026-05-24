@@ -181,7 +181,7 @@ export default function ReservationPage({ params }: { params: Promise<{ id: stri
 
         {status === "CONFIRMED" && (
           <div className="mt-6 text-center">
-            <p className="text-green-600 font-medium mb-4">🎉 Order confirmed! Thank you.</p>
+            <p className="text-green-600 font-medium mb-4">Order confirmed! Thank you.</p>
             <button onClick={() => router.push("/")} className="px-6 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-semibold">
               Continue Shopping
             </button>
