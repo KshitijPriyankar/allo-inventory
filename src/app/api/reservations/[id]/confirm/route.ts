@@ -3,19 +3,21 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
+
     const result = await prisma.$transaction(async (tx) => {
       const reservation = await tx.reservation.findUnique({
-        where: { id: params.id },
+        where: { id },
       });
 
       if (!reservation) throw new Error("NOT_FOUND");
 
       if (reservation.status === "CONFIRMED") {
         return tx.reservation.findUnique({
-          where: { id: params.id },
+          where: { id },
           include: { product: true, warehouse: true },
         });
       }
@@ -26,7 +28,7 @@ export async function POST(
 
       if (new Date() > reservation.expiresAt) {
         await tx.reservation.update({
-          where: { id: params.id },
+          where: { id },
           data: { status: "RELEASED" },
         });
         await tx.$executeRaw`
@@ -39,7 +41,7 @@ export async function POST(
       }
 
       const confirmed = await tx.reservation.update({
-        where: { id: params.id },
+        where: { id },
         data: { status: "CONFIRMED" },
         include: { product: true, warehouse: true },
       });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Countdown from "@/components/Countdown";
 
@@ -20,7 +20,8 @@ interface ReservationDetail {
   };
 }
 
-export default function ReservationPage({ params }: { params: { id: string } }) {
+export default function ReservationPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = React.use(params);
   const router = useRouter();
   const [reservation, setReservation]     = useState<ReservationDetail | null>(null);
   const [loading, setLoading]             = useState(true);
@@ -29,18 +30,18 @@ export default function ReservationPage({ params }: { params: { id: string } }) 
   const [actionError, setActionError]     = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`/api/reservations/${params.id}`)
+    fetch(`/api/reservations/${id}`)
       .then((res) => { if (!res.ok) throw new Error(); return res.json(); })
       .then(setReservation)
       .catch(() => setPageError("Reservation not found."))
       .finally(() => setLoading(false));
-  }, [params.id]);
+  }, [id]);
 
   async function handleConfirm() {
     setActionLoading(true);
     setActionError(null);
     try {
-      const res  = await fetch(`/api/reservations/${params.id}/confirm`, { method: "POST" });
+      const res  = await fetch(`/api/reservations/${id}/confirm`, { method: "POST" });
       const data = await res.json();
       if (res.status === 410) {
         setActionError(`⚠️ ${data.error}`);
@@ -57,7 +58,7 @@ export default function ReservationPage({ params }: { params: { id: string } }) 
     setActionLoading(true);
     setActionError(null);
     try {
-      const res = await fetch(`/api/reservations/${params.id}/release`, { method: "POST" });
+      const res = await fetch(`/api/reservations/${id}/release`, { method: "POST" });
       if (!res.ok) { setActionError("Failed to cancel. Please try again."); return; }
       setReservation(await res.json());
     } catch { setActionError("Network error."); }
