@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
@@ -38,7 +40,9 @@ export async function GET(req: NextRequest) {
       }),
     ]);
 
+    console.log(`[cron] Released ${expired.length} expired reservations`);
     return NextResponse.json({ released: expired.length });
+
   } catch (error) {
     console.error("[cron] Error:", error);
     return NextResponse.json({ error: "Cron job failed" }, { status: 500 });
